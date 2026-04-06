@@ -382,7 +382,6 @@
   const valY = document.getElementById('valY');
   const valZ = document.getElementById('valZ');
   const valN = document.getElementById('valN');
-  const valTotal = document.getElementById('valTotal');
   const valFinal = document.getElementById('valFinal');
   const valSecondFinal = document.getElementById('valSecondFinal');
 
@@ -423,11 +422,9 @@
 
     if (allReady) {
       const total = n + y + x + z;
-      setVal(valTotal, total);
       setVal(valFinal, total + 67.34);
       setVal(valSecondFinal, 347.50 + n);
     } else {
-      setVal(valTotal, null);
       setVal(valFinal, null);
       setVal(valSecondFinal, null);
     }
