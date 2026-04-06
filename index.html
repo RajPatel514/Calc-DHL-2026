@@ -249,6 +249,27 @@
 
     .result-left { display: flex; flex-direction: column; gap: 2px; }
 
+    /* ── Special checkbox ── */
+    .special-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 8px 24px 0;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-mid);
+      cursor: pointer;
+    }
+
+    .special-label input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
     /* ── Reset ── */
     .reset-btn {
       margin: 8px 24px 0;
@@ -321,6 +342,11 @@
     </div>
   </div>
 
+  <label class="special-label">
+    <input type="checkbox" id="chkSpecial" onchange="calculate()" />
+    Special
+  </label>
+
   <!-- Breakdown -->
   <div class="breakdown-section">
     <div class="section-label">Breakdown</div>
@@ -384,6 +410,7 @@
   const valN = document.getElementById('valN');
   const valFinal = document.getElementById('valFinal');
   const valSecondFinal = document.getElementById('valSecondFinal');
+  const chkSpecial = document.getElementById('chkSpecial');
 
   function fmt(n) {
     return n.toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -421,9 +448,10 @@
     const allReady = x !== null && y !== null && z !== null && n !== null;
 
     if (allReady) {
+      const special = chkSpecial.checked ? 27.98 : 0;
       const total = n + y + x + z;
-      setVal(valFinal, total + 67.34);
-      setVal(valSecondFinal, 347.50 + n);
+      setVal(valFinal, total + 67.34 + special);
+      setVal(valSecondFinal, 347.50 + n + special);
     } else {
       setVal(valFinal, null);
       setVal(valSecondFinal, null);
@@ -434,6 +462,7 @@
     inputA.value = '';
     inputB.value = '';
     inputC.value = '';
+    chkSpecial.checked = false;
     calculate();
   }
 
