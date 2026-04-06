@@ -87,7 +87,7 @@
 
     .input-row {
       display: grid;
-      grid-template-columns: 20px 1fr auto;
+      grid-template-columns: 48px 1fr auto;
       align-items: center;
       gap: 14px;
     }
@@ -253,6 +253,7 @@
     .special-label {
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 10px;
       margin: 8px 24px 0;
       font-size: 13px;
@@ -340,6 +341,14 @@
       </div>
       <div class="multiplier">× 3.62 <em>→ z</em></div>
     </div>
+
+    <div class="input-row">
+      <span class="var-label">SORT</span>
+      <div class="input-wrap">
+        <input type="number" id="inputD" inputmode="decimal" placeholder="0.00" step="any" value="0" />
+      </div>
+      <div class="multiplier">× 27.98 <em>→ w</em></div>
+    </div>
   </div>
 
   <label class="special-label">
@@ -370,6 +379,11 @@
         <span class="breakdown-expr">a × 0.15</span>
         <span class="breakdown-varname">n =</span>
         <span class="breakdown-val" id="valN">—</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="breakdown-expr">d × 27.98</span>
+        <span class="breakdown-varname">w =</span>
+        <span class="breakdown-val" id="valW">—</span>
       </div>
     </div>
   </div>
@@ -403,11 +417,13 @@
   const inputA = document.getElementById('inputA');
   const inputB = document.getElementById('inputB');
   const inputC = document.getElementById('inputC');
+  const inputD = document.getElementById('inputD');
 
   const valX = document.getElementById('valX');
   const valY = document.getElementById('valY');
   const valZ = document.getElementById('valZ');
   const valN = document.getElementById('valN');
+  const valW = document.getElementById('valW');
   const valFinal = document.getElementById('valFinal');
   const valSecondFinal = document.getElementById('valSecondFinal');
   const chkSpecial = document.getElementById('chkSpecial');
@@ -430,6 +446,7 @@
     const a = parseFloat(inputA.value);
     const b = parseFloat(inputB.value);
     const c = parseFloat(inputC.value);
+    const d = parseFloat(inputD.value) || 0;
 
     const hasA = !isNaN(a);
     const hasB = !isNaN(b);
@@ -439,19 +456,21 @@
     const y = hasB ? b * 0.33  : null;
     const z = hasC ? c * 3.62  : null;
     const n = hasA ? a * 0.15  : null;
+    const w = d * 27.98;
 
     setVal(valX, x);
     setVal(valY, y);
     setVal(valZ, z);
     setVal(valN, n);
+    setVal(valW, w);
 
     const allReady = x !== null && y !== null && z !== null && n !== null;
 
     if (allReady) {
       const special = chkSpecial.checked ? 27.98 : 0;
-      const total = n + y + x + z;
+      const total = n + y + x + z + w;
       setVal(valFinal, total + 67.34 + special);
-      setVal(valSecondFinal, 347.50 + n + special);
+      setVal(valSecondFinal, 347.50 + n + w + special);
     } else {
       setVal(valFinal, null);
       setVal(valSecondFinal, null);
@@ -462,6 +481,7 @@
     inputA.value = '';
     inputB.value = '';
     inputC.value = '';
+    inputD.value = '0';
     chkSpecial.checked = false;
     calculate();
   }
@@ -469,6 +489,7 @@
   inputA.addEventListener('input', calculate);
   inputB.addEventListener('input', calculate);
   inputC.addEventListener('input', calculate);
+  inputD.addEventListener('input', calculate);
 </script>
 </body>
 </html>
