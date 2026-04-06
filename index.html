@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="DayCalc" />
+  <title>DayCalc</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;600&family=IBM+Plex+Sans:wght@300;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #eeecea;
+      --surface: #ffffff;
+      --border: #b0afab;
+      --accent: #145c30;
+      --accent-dim: rgba(20, 92, 48, 0.10);
+      --text: #0d0d0d;
+      --text-dim: #3a3a38;
+      --text-mid: #111111;
+      --result-bg: #ffffff;
+      --mono: 'IBM Plex Mono', monospace;
+      --sans: 'IBM Plex Sans', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--mono);
+      overscroll-behavior: none;
+    }
+
+    .app {
+      min-height: 100dvh;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 0 0 40px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 52px 24px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    header h1 {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    header span {
+      font-size: 13px;
+      color: var(--text-dim);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Inputs Section ── */
+    .inputs-section {
+      padding: 28px 24px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .section-label {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-mid);
+      margin-bottom: 4px;
+    }
+
+    .input-row {
+      display: grid;
+      grid-template-columns: 20px 1fr auto;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .var-label {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--accent);
+      font-family: var(--mono);
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 20px;
+      font-weight: 400;
+      padding: 12px 14px;
+      border-radius: 4px;
+      outline: none;
+      -webkit-appearance: none;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    input[type="number"]:focus {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    input[type="number"]::placeholder {
+      color: var(--text-dim);
+      font-size: 16px;
+    }
+
+    /* hide spinners */
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+    .multiplier {
+      font-size: 14px;
+      color: var(--text-mid);
+      white-space: nowrap;
+      text-align: right;
+      min-width: 72px;
+    }
+
+    .multiplier em {
+      font-style: normal;
+      color: var(--text-dim);
+      font-size: 13px;
+    }
+
+    /* ── Breakdown ── */
+    .breakdown-section {
+      padding: 24px 24px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .breakdown-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .breakdown-expr {
+      font-size: 15px;
+      color: var(--text-dim);
+      flex: 1;
+    }
+
+    .breakdown-varname {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-mid);
+      margin-right: 4px;
+    }
+
+    .breakdown-val {
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--text);
+      transition: color 0.2s;
+      min-width: 90px;
+      text-align: right;
+    }
+
+    .breakdown-val.active {
+      color: var(--accent);
+    }
+
+    /* ── Results ── */
+    .results-section {
+      padding: 20px 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .result-card {
+      background: var(--result-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 24px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      transition: border-color 0.2s;
+    }
+
+    .result-card.primary {
+      border-color: rgba(20, 92, 48, 0.45);
+      background: rgba(20, 92, 48, 0.07);
+    }
+
+    .result-label {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-mid);
+    }
+
+    .result-card.primary .result-label {
+      color: var(--accent);
+    }
+
+    .result-value {
+      font-size: 30px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .result-card.primary .result-value {
+      color: var(--accent);
+      font-size: 34px;
+    }
+
+    .result-formula {
+      font-size: 15px;
+      color: var(--text-dim);
+      margin-top: 2px;
+      font-family: var(--mono);
+    }
+
+    .result-left { display: flex; flex-direction: column; gap: 2px; }
+
+    /* ── Reset ── */
+    .reset-btn {
+      margin: 8px 24px 0;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      font-family: var(--mono);
+      font-size: 13px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .reset-btn:active {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* divider tick marks */
+    .tick-row {
+      display: flex;
+      gap: 4px;
+      padding: 0 24px;
+      margin: 4px 0;
+    }
+    .tick {
+      width: 4px;
+      height: 1px;
+      background: var(--border);
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <h1>DayCalc</h1>
+    <span>Daily Line Calculator</span>
+  </header>
+
+  <!-- Inputs -->
+  <div class="inputs-section">
+    <div class="section-label">Inputs</div>
+
+    <div class="input-row">
+      <span class="var-label">a</span>
+      <div class="input-wrap">
+        <input type="number" id="inputA" inputmode="decimal" placeholder="0.00" step="any" />
+      </div>
+      <div class="multiplier">× 0.911 <em>→ x</em><br>× 0.15 <em>→ n</em></div>
+    </div>
+
+    <div class="input-row">
+      <span class="var-label">b</span>
+      <div class="input-wrap">
+        <input type="number" id="inputB" inputmode="decimal" placeholder="0.00" step="any" />
+      </div>
+      <div class="multiplier">× 0.33 <em>→ y</em></div>
+    </div>
+
+    <div class="input-row">
+      <span class="var-label">c</span>
+      <div class="input-wrap">
+        <input type="number" id="inputC" inputmode="decimal" placeholder="0.00" step="any" />
+      </div>
+      <div class="multiplier">× 3.62 <em>→ z</em></div>
+    </div>
+  </div>
+
+  <!-- Breakdown -->
+  <div class="breakdown-section">
+    <div class="section-label">Breakdown</div>
+    <div class="breakdown-grid">
+      <div class="breakdown-row">
+        <span class="breakdown-expr">a × 0.911</span>
+        <span class="breakdown-varname">x =</span>
+        <span class="breakdown-val" id="valX">—</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="breakdown-expr">b × 0.33</span>
+        <span class="breakdown-varname">y =</span>
+        <span class="breakdown-val" id="valY">—</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="breakdown-expr">c × 3.62</span>
+        <span class="breakdown-varname">z =</span>
+        <span class="breakdown-val" id="valZ">—</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="breakdown-expr">a × 0.15</span>
+        <span class="breakdown-varname">n =</span>
+        <span class="breakdown-val" id="valN">—</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="results-section">
+    <div class="section-label">Results</div>
+
+    <div class="result-card primary">
+      <div class="result-left">
+        <span class="result-label">Total</span>
+        <span class="result-formula">total + 67.34</span>
+      </div>
+      <span class="result-value" id="valFinal">—</span>
+    </div>
+
+    <div class="result-card">
+      <div class="result-left">
+        <span class="result-label">Minimum</span>
+        <span class="result-formula">347.50 + n</span>
+      </div>
+      <span class="result-value" id="valSecondFinal">—</span>
+    </div>
+  </div>
+
+  <button class="reset-btn" onclick="resetAll()">↺ &nbsp; Clear All</button>
+
+</div>
+
+<script>
+  const inputA = document.getElementById('inputA');
+  const inputB = document.getElementById('inputB');
+  const inputC = document.getElementById('inputC');
+
+  const valX = document.getElementById('valX');
+  const valY = document.getElementById('valY');
+  const valZ = document.getElementById('valZ');
+  const valN = document.getElementById('valN');
+  const valTotal = document.getElementById('valTotal');
+  const valFinal = document.getElementById('valFinal');
+  const valSecondFinal = document.getElementById('valSecondFinal');
+
+  function fmt(n) {
+    return n.toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function setVal(el, val) {
+    if (val === null) {
+      el.textContent = '—';
+      el.classList.remove('active');
+    } else {
+      el.textContent = fmt(val);
+      el.classList.add('active');
+    }
+  }
+
+  function calculate() {
+    const a = parseFloat(inputA.value);
+    const b = parseFloat(inputB.value);
+    const c = parseFloat(inputC.value);
+
+    const hasA = !isNaN(a);
+    const hasB = !isNaN(b);
+    const hasC = !isNaN(c);
+
+    const x = hasA ? a * 0.911 : null;
+    const y = hasB ? b * 0.33  : null;
+    const z = hasC ? c * 3.62  : null;
+    const n = hasA ? a * 0.15  : null;
+
+    setVal(valX, x);
+    setVal(valY, y);
+    setVal(valZ, z);
+    setVal(valN, n);
+
+    const allReady = x !== null && y !== null && z !== null && n !== null;
+
+    if (allReady) {
+      const total = n + y + x + z;
+      setVal(valTotal, total);
+      setVal(valFinal, total + 67.34);
+      setVal(valSecondFinal, 347.50 + n);
+    } else {
+      setVal(valTotal, null);
+      setVal(valFinal, null);
+      setVal(valSecondFinal, null);
+    }
+  }
+
+  function resetAll() {
+    inputA.value = '';
+    inputB.value = '';
+    inputC.value = '';
+    calculate();
+  }
+
+  inputA.addEventListener('input', calculate);
+  inputB.addEventListener('input', calculate);
+  inputC.addEventListener('input', calculate);
+</script>
+</body>
+</html>
