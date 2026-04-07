@@ -347,7 +347,7 @@
       <div class="input-wrap">
         <input type="number" id="inputD" inputmode="decimal" placeholder="0.00" step="any" value="0" />
       </div>
-      <div class="multiplier">× 27.98 <em>→ w</em></div>
+      <div class="multiplier">× 27.91 <em>→ w</em></div>
     </div>
   </div>
 
@@ -381,7 +381,7 @@
         <span class="breakdown-val" id="valN">—</span>
       </div>
       <div class="breakdown-row">
-        <span class="breakdown-expr">d × 27.98</span>
+        <span class="breakdown-expr">d × 27.91</span>
         <span class="breakdown-varname">w =</span>
         <span class="breakdown-val" id="valW">—</span>
       </div>
@@ -395,7 +395,7 @@
     <div class="result-card primary">
       <div class="result-left">
         <span class="result-label">Total</span>
-        <span class="result-formula">total + 67.34</span>
+        <span class="result-formula">total + 67.28</span>
       </div>
       <span class="result-value" id="valFinal">—</span>
     </div>
@@ -403,7 +403,7 @@
     <div class="result-card">
       <div class="result-left">
         <span class="result-label">Minimum</span>
-        <span class="result-formula">347.50 + n</span>
+        <span class="result-formula">346.73 + n</span>
       </div>
       <span class="result-value" id="valSecondFinal">—</span>
     </div>
@@ -456,7 +456,7 @@
     const y = hasB ? b * 0.33  : null;
     const z = hasC ? c * 3.62  : null;
     const n = hasA ? a * 0.15  : null;
-    const w = d * 27.98;
+    const w = d * 27.91;
 
     setVal(valX, x);
     setVal(valY, y);
@@ -467,10 +467,10 @@
     const allReady = x !== null && y !== null && z !== null && n !== null;
 
     if (allReady) {
-      const special = chkSpecial.checked ? 27.98 : 0;
+      const special = chkSpecial.checked ? 27.91 : 0;
       const total = n + y + x + z + w;
-      setVal(valFinal, total + 67.34 + special);
-      setVal(valSecondFinal, 347.50 + n + w + special);
+      setVal(valFinal, total + 67.28 + special);
+      setVal(valSecondFinal, 346.73 + n + w + special);
     } else {
       setVal(valFinal, null);
       setVal(valSecondFinal, null);
